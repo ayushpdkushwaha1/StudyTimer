@@ -10,10 +10,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: Install System Dependencies
         run: |
@@ -21,17 +21,10 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
 
       - name: Install Python Dependencies
-        run: pip install buildozer Cython virtualenv
-
-      - name: Auto-Fix Buildozer Settings
-        run: |
-          sed -i 's/^requirements =.*/requirements = python3==3.11.9,kivy,pyjnius/' buildozer.spec
-          sed -i 's/^log_level =.*/log_level = 2/' buildozer.spec
-          sed -i 's/^android.archs =.*/android.archs = arm64-v8a/' buildozer.spec
+        run: pip install buildozer virtualenv cython==0.29.33
 
       - name: Build APK with Buildozer
-        run: |
-          buildozer android debug > buildozer_log.txt 2>&1 || (echo "=== ASLI ERROR YAHAN HAI ===" && tail -n 300 buildozer_log.txt && exit 1)
+        run: yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
