@@ -1,4 +1,4 @@
-name: Build Android APK (Docker)
+name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -10,14 +10,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Fix Directory Permissions for Docker
-        run: |
-          sudo chown -R 1000:1000 $GITHUB_WORKSPACE
-
-      - name: Build APK using Official Docker Image
-        uses: docker://kivy/buildozer:latest
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          args: android debug
+          python-version: '3.11'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+
+      - name: Install Python Dependencies
+        run: pip install buildozer Cython virtualenv
+
+      - name: Auto-Fix Specs (The Brahmastra)
+        run: |
+          # Yeh python3 aur hostpython3 dono ko 3.11 par lock kar dega (3.14 hamesha ke liye ban)
+          sed -i 's/^requirements =.*/requirements = python3==3.11.9,hostpython3==3.11.9,kivy,pyjnius/' buildozer.spec
+          sed -i 's/^warn_on_root =.*/warn_on_root = 0/' buildozer.spec
+          sed -i 's/^log_level =.*/log_level = 2/' buildozer.spec
+
+      - name: Build APK (Smart Log)
+        run: |
+          buildozer android debug > buildozer_log.txt 2>&1 || (echo "=== ASLI ERROR YAHAN HAI ===" && tail -n 300 buildozer_log.txt && exit 1)
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
