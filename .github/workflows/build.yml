@@ -10,6 +10,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
@@ -18,16 +24,14 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
 
       - name: Install Python Dependencies
         run: pip install buildozer Cython virtualenv
 
-      - name: Auto-Fix Specs (The Brahmastra)
+      - name: Auto-Fix Specs
         run: |
-          # Yeh python3 aur hostpython3 dono ko 3.11 par lock kar dega (3.14 hamesha ke liye ban)
           sed -i 's/^requirements =.*/requirements = python3==3.11.9,hostpython3==3.11.9,kivy,pyjnius/' buildozer.spec
-          sed -i 's/^warn_on_root =.*/warn_on_root = 0/' buildozer.spec
           sed -i 's/^log_level =.*/log_level = 2/' buildozer.spec
 
       - name: Build APK (Smart Log)
