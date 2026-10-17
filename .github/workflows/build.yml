@@ -25,14 +25,13 @@ jobs:
 
       - name: Auto-Fix Buildozer Settings
         run: |
-          # Yeh command tumhare spec file ko automatically theek kar degi
-          sed -i 's/^requirements =.*/requirements = python3,kivy,pyjnius/' buildozer.spec
+          # Yahan hum Buildozer ko stable Python 3.11.9 use karne ke liye force kar rahe hain
+          sed -i 's/^requirements =.*/requirements = python3==3.11.9,kivy,pyjnius/' buildozer.spec
           sed -i 's/^log_level =.*/log_level = 2/' buildozer.spec
           sed -i 's/^android.archs =.*/android.archs = arm64-v8a/' buildozer.spec
 
       - name: Build APK with Buildozer (Smart Log)
         run: |
-          # Yeh background mein run karega. Agar error aaya toh sirf aakhiri 300 line dikhayega jisse GitHub truncate na kare.
           yes | buildozer android debug > buildozer_log.txt 2>&1 || (echo "=== ASLI ERROR YAHAN HAI ===" && tail -n 300 buildozer_log.txt && exit 1)
 
       - name: Upload APK
