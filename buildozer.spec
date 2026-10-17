@@ -9,7 +9,7 @@ requirements = python3,kivy,pyjnius==1.1.0
 orientation = portrait
 fullscreen = 1
 android.permissions = WAKE_LOCK
-android.archs = arm64-v8a
+android.archs = armeabi-v7a, arm64-v8a
 android.accept_sdk_license = True
 android.ndk = 25b
 
