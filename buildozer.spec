@@ -5,7 +5,7 @@ package.domain = org.ayush
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
-requirements = python3,kivy,pyjnius==1.9.0
+requirements = python3,kivy,pyjnius==1.1.0
 orientation = portrait
 fullscreen = 1
 android.permissions = WAKE_LOCK
